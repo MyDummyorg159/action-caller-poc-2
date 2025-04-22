@@ -1,0 +1,37 @@
+name: Use Enhanced Wrapper Action
+
+on:
+  workflow_dispatch:
+    inputs:
+      yourName:
+        description: "Your name"
+        required: true
+        default: "World"
+      greeting:
+        description: "Custom greeting"
+        required: false
+        default: "Hi"
+
+jobs:
+  call-action:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Call enhanced wrapped action
+        id: greeting
+        uses: MyDummyorg159/marketplace-wrapper-action/.github/actions/hello-wrapper@main
+        with:
+          name: ${{ github.event.inputs.yourName }}
+          greeting: ${{ github.event.inputs.greeting }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print plain message
+        run: 'echo "Action said: ${{ steps.greeting.outputs.message }}"'
+
+      - name: Print JSON output
+        run: |
+          echo "Structured JSON:"
+          echo '${{ steps.greeting.outputs.json }}'
